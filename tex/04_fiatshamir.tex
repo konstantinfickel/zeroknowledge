@@ -1,0 +1,81 @@
+\section{Fiat-Shamir-Identifkationssystem}
+
+Eine naheliegende Verwendung von Zero-Knowledge-Beweisen sind Identifikationssysteme, bei denen ein Verifizierer nicht genug Informationen besitzen darf, um sich selbst gegenüber anderen Verifizierern als der Beweiser ausgeben zu können.\footnote{siehe \cite[Seite 1]{fiatshamir}}
+
+Ein praktisches Szenario davon wäre beispielsweise ein Schlüsselkartensystem, bei dem eine vertrauenswürdige Zentrale (mit hier unbeschränkter Laufzeit) wie die Firmenleitung Schlüsselkarten ausstellt, mit denen sich dann die Mitarbeiter an den Türen verifizieren könnten. Dabei ist es wünschenswert, wenn die Hardware an den Türen möglichst einfach sein kann, also keinen Zugriff auf ein Public-Key-Verzeichnis benötigt und keine aufwendigen Berechnungen durchgeführt werden müssen. Außerdem ist es vorteilhaft, wenn der öffentlich zugängliche Verifizierer keine geheimen Informationen enthält oder verarbeitet, sodass ein Diebstahl oder eine Manipulation des Türöffners dem Angreifer keinen Vorteil bringt. 
+
+In diesem Szenario ist beispielsweise das von Amos Fiat und Adi Shamir entwickelte Identifikationssystem anwendbar, welches im Folgenden vorgestellt wird.
+
+\subsection{Voraussetzungen}
+
+Bevor eine solche Schlüsselkarte ausgestellt werden kann, muss  die Zentrale einmalig zwei geheime Primzahlen \( p \) und \( q \) wählen und deren Produkt \( n = p \cdot q \) veröffentlichen.
+
+Anschließend können Schlüsselkarten, die in der Lage sind, kleine Berechnungen durchzuführen und mit dem Türöffner zu kommunizieren, ausgestellt werden. Auf ihnen sind  die Werte \( v \) und \( s \) gespeichert, die wie folgt berechnet werden können:\footnote{siehe \cite{fiatshamir}. Um das Protokoll zu vereinfachen, habe ich \( k = 1 \) gesetzt und bestimme \( v \) willkürlich.}
+
+% TODO: Abstand
+\vspace{0.2cm}
+
+\begin{algorithm}[Ausstellung einer Schlüsselkarte]
+\label{algorithm:issue}
+Finde ein \( v \in \left\lbrace 1, \dots, n \right\rbrace \), welches ein quadratischer Rest ist, und finde \( v^{-1} \) mit \( v^{-1} \cdot v \textsf{ mod } n = 1 \). Berechne von \( v^{-1} \) die kleinste quadratische Wurzel \( s \) mit \( s^{2} \textsf{ mod } n = v^{-1} \). Stelle die Schlüsselkarte mit \( v \) und \( s \) aus
+\end{algorithm}
+
+% TODO: evtl. Quellen einfügen, die begründen, warum diese Werte auch effizient berechenbar sind.
+
+\subsection{Protokoll}
+Die Verifizierung der Schlüsselkarte \( P \) an einer Tür \( V \) läuft dann wie folgt ab:
+
+% TODO: Abstand
+\vspace{0.2cm}
+\begin{protocol}[Verifizierung einer Schlüsselkarte:]
+Gemeinsame Eingabe: \( n \) (und gewissermaßen \( v \), da es zu Beginn des Protokolls direkt an \( V \) übertragen wird)\\
+Geheime Eingabe an den Beweiser: \( s \)
+\label{protocol:fiatshamir}
+\item[(Beweiser, Schritt 1)]: Wähle ein zufälliges \( r \in \left\lbrace 0, \dots, n - 1 \right\rbrace \). Sende \( x = r^{2} \) zusammen mit \( v \) an \( V \)
+\item[(Verifizierer, Schritt 1)]:  Sende ein zufälliges Bit \( e \in \left\lbrace 0, 1 \right\rbrace \)
+\item[(Beweiser, Schritt 2)]: Sende \( y = r \cdot s^e \textsf{ mod } n \)
+\item[(Verifizierer, Schritt 2)]: Überprüfe, ob \( x = y^2 \cdot v^e \textsf{ mod } n \)
+\end{protocol}
+
+Statt \( v \) willkürlich festzulegen, kann dies auch ein durch einen speziellen \glqq{}Hash-Wert\grqq{} einer von der Zentrale durch die Bestimmung des passenden \(s \) zu signierenden Identifikationszeichenkette festgelegt sein, die dann von der Schlüsselkarte statt \( v \) übertragen wird.
+
+\subsection{Zero-Knowledge-Aspekte}
+
+\begin{theorem}
+Bei Protokoll \ref{protocol:fiatshamir} handelt es sich um ein interaktives Beweissystem, wenn \( P \) nicht in polynomieller Zeit die \( \textsf{mod } n \)-Wurzel von \( v \) oder \( v^{-1} \) berechnen kann.
+\end{theorem}
+
+\begin{proof}
+Vollständigkeit: Falls \( P \) und \( V \) das Protokoll befolgen, akzeptiert \( V \) immer, da \( P \) im Besitz von \( s \) ist und somit das korrekte \( y \) senden kann:
+\begin{multline*}
+y^2 \cdot v^e \textsf{ mod } n =
+\left( r \cdot s^e \right)^2 \cdot v^e \textsf{ mod } n =
+r^2 \cdot \left( s^2 \cdot v \right)^e \textsf{ mod } n = \\
+\left( r^2 \textsf{ mod } n \right) \cdot \underbrace{ \left( \left( s^2 \cdot v \right)^e \textsf{ mod } n \right) }_{ = 1 \text{ nach Festlegung}} = x
+\end{multline*}
+Korrektheit: Da sich ein unehrlicher Beweiser \( P \) nicht im Besitz von \( s \) befindet und dieses nach Voraussetzung nicht berechnen kann, muss \( V \) das Bit \( e \) raten - und wird somit mit einer Wahrscheinlichkeit von \( \geq \frac{1}{2} \) enttarnt.\footnote{genauer Beweis ist unter \cite[Lemma 1 + 2]{fiatshamir} zu finden}
+\end{proof}
+
+% TODO: Abstand
+\vspace{0.2cm}
+
+\begin{theorem}
+Protokoll \ref{protocol:fiatshamir} ist Zero Knowledge.
+\end{theorem}
+
+Die intuitive Begründung dafür, dass Protokoll \ref{protocol:fiatshamir} Zero Knowledge ist, ergibt sich daraus, dass \( x \) ein Quadrat einer zufälligen Zahl und bei \( y \) das geheime \( s \) durch die Multiplikation mit einer zufälligen Zahl versteckt wird. Somit sind alle Nachrichten, die \( P \) sendet, Zufallszahlen mit einer Gleichverteilung, woran kein unehrlicher Verifizierer \( V^{\ast} \) etwas ändern kann.
+
+Um dies formal zu beweisen, wird wieder ein im Erwartungswert polynomielles \( M_{V^{\ast}} \) angegeben, welches ohne Kenntnis von \( s \) eine von einer echten Ausführung rechnerisch ununterscheidbare Kommunikation generieren kann.\footnote{siehe \cite{fiatshamir}}
+
+% TODO: evtl Cheat-Strategie besprechen
+
+\subsection{Rechenbeispiel}
+Um die Funktionsweise des Identifikationsschemas noch einmal zu verdeutlichen, folgt hier ein Zahlenbeispiel mit handlichen Zahlen. In der Orginalarbeit \cite{fiatshamir} von 1986 war für die Praxis ein \( n \) in der Größenordnung von \( 512 \) Bit (statt den \( 4 \) Bit im Beispiel) vorgeschlagen.
+
+\begin{itemize}
+\item[Ausstellung durch Zentrale]: In diesem Beispiel seien die geheimen Primzahlen der Zentrale \( p = 3 \) und \( q = 7 \), womit \( n = 21 \). Als \( v \) wurde der Wert \( 16 = 10^2 \textsf{ mod } 21\) gewählt. \( v^{-1} \) ist, damit \( v \cdot v^{-1} \textsf{ mod } 21 = 1 \) erfüllt wird, \( 4 \), womit die \( \textsf{mod } 21 \)-Quadratwurzel \( s \) von \( v^{-1} \) den Wert \( s = 2 \) besitzt.
+\item[(Schritt 1)]: Als zufälliges \( r \) zieht der Beweiser \( r = 12 \), womit an den Verifizierer der Wert \( x = r^2 \textsf{ mod } n = 12 ^ 2 \textsf{ mod } 21 = 18 \) gesendet wird. Der Verifizierer zieht daraufhin zufällig \( e = 1 \).
+\item[(Schritt 2)]: Der Beweiser antwortet darauf mit \( y = r \cdot s \textsf{ mod } n = 3 \). Der Verifizierer rechnet \( y^2 \cdot v^e \textsf{ mod } n = 3^2 \cdot 16 \textsf{ mod } 21 = 18 = x \), womit der Verifizierer in diesem Beweisdurchgang akzeptiert.
+\end{itemize}
+
+\pagebreak

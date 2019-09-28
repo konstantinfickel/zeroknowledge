@@ -1,0 +1,95 @@
+\documentclass[12pt,a4paper,bibliography=totocnumbered,listof=totocnumbered]{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage[right]{eurosym}
+\usepackage{subfig}
+\usepackage{floatflt}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{colortbl}
+\usepackage{paralist}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage[right]{eurosym}
+\usepackage[subfigure,titles]{tocloft}
+\usepackage[pdfpagelabels=true]{hyperref}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{pdfpages}
+\usepackage{breqn}
+
+\newtheorem{definition}{Definition}
+\newtheorem{claim}{Behauptung}
+\newtheorem{theorem}{Satz}
+\newtheorem{protocol}{Protokoll}
+\newtheorem{algorithm}{Algorithmus}
+
+\geometry{a4paper, top=5mm, left=5mm, right=5mm, bottom=5mm, headsep=10mm, footskip=12mm}
+
+\begin{document}
+
+\textbf{Einleitung} In meinem Vortrag geht es um eine spezielle Art von Beweisen. Um zu verdeutlichen, worum es geht, fange ich mit einem konkreten Protokoll an: Stellt euch vor, es wäre bisher kein Verfahren bekannt, mit dem man in zwei Becher die selbe Anzahl an Murmeln füllen kann - aber nur, wenn es unter 20 sind. Sonst ist es einfach. Und ich habe jetzt eine Technik herausgefunden, mit der ich dies hinbekommen kann, und will euch zeigen, dass ich es beherrsche, ohne euch irgendetwas preiszugeben.
+
+\vspace{3mm}
+
+\begin{definition}[Interaktive Turing-Maschine]
+Eine Interaktive Turing Maschine (kurz ITM) ist eine Sechs-Band-Turing-Maschine mit einem \textnormal{Arbeitsband}, einem nur-lesbaren \glqq{}öffentlichen\grqq{} \textnormal{Eingabeband},einem nur-lesbaren \glqq{}privaten\grqq{} Eingabeband, jeweils einem nur-les- bzw. nur-beschreibbaren \textnormal{Kommunikationsband} und einem \textnormal{Zufallszahlenband}, das mit Zufallsbits beschrieben ist.
+\end{definition}
+
+\begin{definition}[Interaktives Protokoll]
+Ein interaktives Protokoll ist ein geordnetes Paar \( \left< P, V \right> \) zweier ITMs, die sich das \glqq{}öffentliche\grqq{} Eingabeband teilen und jeweils das beschreibbare Kommunikationsband der einen das lesbare Kommunikationsband der anderen ITM ist. Beide Maschinen führen ihre Berechnung abwechselnd durch: Während die eine rechnet, befindet sich die andere im \glqq{}Leerlauf\grqq{}. Das Wort, das von einer während eines einzelnen Berechnungsschrittes auf das Band geschrieben wird, wird als die zur anderen ITM \textnormal{gesendete Nachricht} bezeichnet.
+\end{definition}
+
+\begin{definition}[Interaktive Beweissysteme]
+\label{definition:proofsystem}
+Ein interaktives Beweissystem ist ein interaktives Protokoll 
+\( \left< P, V\right> \). Dabei ist die Laufzeit von \( V \) und \( P \) polynomiell bezüglich des Wortes auf dem Eingabeband beschränkt. Das geheime Eingabeband des Beweisers beinhaltet die Lösung des Problems, das des Verifizierers bleibt leer. Zusätzlich sei erfüllt:
+\begin{itemize}
+
+\item[\textnormal{Vollständigkeit:}] \( \forall \omega \in L : \textnormal{\textbf{\textsf{P}}} \left( V \textnormal{ akzeptiert bei } \left< P, V \right> \left( \omega \right) \right) = 1 \)  \glqq{}Für jedes \( \omega \in L \) akzeptiert \( V \) immer nach der Durchführung des Beweises mit dem Beweiser \( P \).\grqq{}
+
+\item[\textnormal{Korrektheit:}] \( \exists p \textnormal{ Polynom}: \forall \omega \notin L, P^{\ast} \textnormal{ beliebige ITM} : \textnormal{\textbf{\textsf{P}}} \left( V \textnormal{ akzeptiert bei } \left< P ^{\ast}, V \right> \left( \omega \right) \right) \leq \frac{1}{p \left( \left| \omega \right| \right)}  \) \glqq{}Für jedes \( \omega \notin L \) gibt es keine Strategie, mit der der Verfizierer \glqq{}immer\grqq{} überzeugt werden kann.\grqq{}
+\end{itemize}
+\end{definition}
+
+\begin{definition}[Rechnerische Ununterscheidbarkeit] Sei \( L \) eine Sprache.
+Zwei in der Länge polynomiell beschränkte Zufallsvariablen \( U \left( \omega \right) \) und \( V \left( \omega \right) \) über \( L \) sind rechnerisch ununterscheidbar, falls für jeden im Erwartungswert polynomiellen Algorithmus \( C \) und für jedes Polynom \( p \) bei ausreichend langem \( \omega \in L \) gilt:
+\( \left| \textnormal{\textbf{\textsf{P}}} \left( C \left( U \left( \omega \right) \right) = 1 \right) - \textnormal{\textbf{\textsf{P}}} \left( C \left( V \left( \omega \right) \right) = 1 \right) \right| < \frac{1}{p \left( \left| \omega \right| \right)} \)
+\end{definition}
+
+\begin{definition}[Zero Knowledge]
+\label{definition:zeroknowledge}
+Ein Beweiser \( P \) ist genau dann (rechnerisch) \textnormal{Zero Knowledge} auf Eingabewörtern aus \( L \), wenn für jeden probabilistisch-polynomiellen Verifizierer \( V ^ {\ast} \) eine im Erwartungswert polynomielle Turing-Maschine \( M_{V^{\ast}} \) existiert, die die Kommunikation zwischen \( P \) und \( V^{\ast} \) simuliert, sodass folgende Familien von Zufallsvariablen rechnerisch ununterscheidbar sind:
+\begin{enumerate}
+\item[1.] \( \left\lbrace \left< P, V^{\ast} \right> \left( \omega \right) \right\rbrace _{\omega \in L} \) \( \overset{\textnormal{def}}{=} \) die Kommunikation zwischen \( V ^ {\ast}\) und \( P \) bei gemeinsamer Eingabe \( \omega \in L \).
+\item[2.] \( \left\lbrace M_{V^{\ast}} \left( \omega \right) \right\rbrace _{\omega \in L} \) \( \overset{\textnormal{def}}{=} \) die Ausgabe des Simulators \( M_{V^{\ast}} \) bei der Eingabe von \( \omega \in L \). 
+\end{enumerate}
+\end{definition}
+
+\textbf{Fiat Shamir} \( y^2 \cdot v^e \textsf{ mod } n =
+\left( r \cdot s^e \right)^2 \cdot v^e \textsf{ mod } n =
+r^2 \cdot \left( s^2 \cdot v \right)^e \textsf{ mod } n = 
+\left( r^2 \textsf{ mod } n \right) \cdot \underbrace{ \left( \left( s^2 \cdot v \right)^e \textsf{ mod } n \right) }_{ = 1 \text{ nach Festlegung}} = x \)
+
+\begin{itemize}
+\item[Ausstellung durch Zentrale]: In diesem Beispiel seien die geheimen Primzahlen der Zentrale \( p = 3 \) und \( q = 7 \), womit \( n = 21 \). Als \( v \) wurde der Wert \( 16 = 10^2 \textsf{ mod } 21\) gewählt. \( v^{-1} \) ist, damit \( v \cdot v^{-1} \textsf{ mod } 21 = 1 \) erfüllt wird, \( 4 \), womit die \( \textsf{mod } 21 \)-Quadratwurzel \( s \) von \( v^{-1} \) den Wert \( s = 2 \) besitzt.
+\item[(Schritt 1)]: Als zufälliges \( r \) zieht der Beweiser \( r = 12 \), womit an den Verifizierer der Wert \( x = r^2 \textsf{ mod } n = 12 ^ 2 \textsf{ mod } 21 = 18 \) gesendet wird. Der Verifizierer zieht daraufhin zufällig \( e = 1 \).
+\item[(Schritt 2)]: Der Beweiser antwortet darauf mit \( y = r \cdot s \textsf{ mod } n = 3 \). Der Verifizierer rechnet \( y^2 \cdot v^e \textsf{ mod } n = 3^2 \cdot 16 \textsf{ mod } 21 = 18 = x \), womit der Verifizierer in diesem Beweisdurchgang akzeptiert.
+\end{itemize}
+
+\textbf{Zerocash} Februar 2017: 30\$, 400\$ vor nem Monat, derzeit 290\$ Preis pro Zcoin. 437.790.690\$ Market Cap. Platz 12 unter den Kryptowährungen. Founders Reward 10\%. Johns Hopkins University, Massachusetts Institute of Technology, Technion – Israel Institute of Technology, Tel Aviv University. CEO Zooko Wilcox, Januar 2016 angekündet, Ende Oktober 2016 gestartet und initialisiert.
+
+\vspace{3mm}
+
+\textbf{Schlusssatz} Ich hoffe, ich konnte euch mit dem Vortrag zeigen, dass Zero Knowledge sowohl eine interessanten theoretischen Hintergrund besitzt, also auch spannende praktische Anwendung, hoffentlich ist mir das nicht in Zero Knowledge gelungen.
+
+\end{document}

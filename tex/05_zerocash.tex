@@ -1,0 +1,36 @@
+\section{Zerocash}
+
+In den letzten Jahren hat sich die dezentrale Crypto-Währung Bitcoin großer Beliebtheit erfreut. Ein Problem von Bitcoin ist jedoch, dass durch die öffentlichen Transaktionen sowohl die bezahlten Beträge, als auch die Pseudonyme der Nutzer öffentlich sind. Mittlerweile wurden einige Ansätze entwickelt, mit deren Hilfe solche Transaktionen mithilfe der Beträge und des insgesamten Transaktionsgraphen den realen Personen zugeordnet werden können.\footnote{siehe \cite[Seite 3]{zerocash}}
+
+Ein möglicher Ansatz, Daten über Transaktionen geheim und dezentral zu halten ist das Zerocash-Protokoll, das ab 2013 von Kryptographen um Professor Eli Ben-Sasson vom Technion, einem israelischen Institut für Technologie, entwickelt wurde. Zcash wurde als konkrete Implementierung davon am 28. Oktober 2016 von der Zcash Electric Coin Company an den Markt gebracht, die von dem amerikanischen IT-Sicherheitsexperten Zooko Wilcox geleitet wird.\footnote{siehe \cite{nytimeszcash}}
+
+Matthew Green, ein Assistant Professor an der Johns Hopkins-Universität in Maryland, der an der Entwicklung beteiligt war, beschrieb die Motivation hinter Zerocash wie folgt: \glqq{}Während man bei der Verwendung von Bitcoin Spuren hinterlässt, die für immer bleiben werden, soll bei Zcash die Privatsphäre fest im System verankert sein.\grqq{}\footnote{frei übersetzt von \cite{nytimeszcash}}
+
+\subsection{Allgemeiner Aufbau}
+Ein Coin besteht aus einer Seriennummer, die bis zum Bezahlen damit privat bleibt und einem geheimen Hintertürchen, aus denen mit einer Einwegfunktion ein sogenanntes Coin-Commitment errechnet wird. Dieses wird in einen öffentlichen Merkle-Baum (einen Baum, bei dem die Eltern eines Knotens mit dem Hash der Kind-Knoten markiert sind) zusammengefasst.
+
+Zerocash benötigt eine einmalige Initialisierung durch einen vertrauenswürdigen Teilnehmer, danach kann die Währung völlig dezentral verwendet werden. Es besitzt wie Bitcoin ein öffentliches, auf mehrere Teilnehmer verteiltes Bestandsbuch (\textit{ledger}), in dem alle Transaktionen eingetragen werden.
+
+Coins können in Zerocash durch die \( \textsf{POUR} \)-Operation aufgebraucht werden, bei dem Coins in andere Coins mit einem anderen Wert \glqq{}umgegegossen\grqq{} werden. Um die korrekte und anonyme Durchführung dieser Akionen zu gewährleisten, werden besondere Zero-Knowledge-Beweise verwendet.
+
+\subsection{zk-SNARKS für \glqq{}Schaltkreise\grqq{}}
+
+Um die Richtigkeit von Ausführungen von Transaktionen zu bestätigen, werden Aussagen über arithmetische Schaltkreise verwendet. Ein arithmetischer Schaltkreis ist ein mathematiches Modell für eine Berechnung mit einem Algorithmus. Die dazu passende NP-Aussage wäre, dass man Eingaben kennt, mit denen der öffentliche arithmetische Schaltkreis zur \( \textsf{POUR} \)-Operation erfüllt werden kann.\footnote{siehe \cite[Seite 5]{zksnark}}
+
+Da es zu aufwendig wäre, wenn jeder Teil des öffentlichen Bestandbuches einen interaktiven Beweis mit dem Urheber der Transaktion führen müsste, wird hier eine andere Art von Zero-Knowledge-Beweisen, die sogenannten Zero Knowledge Succint Non-Interactive Arguments of Knowledge, kurz zk-SNARKs, verwendet.
+
+Argument of Knowledge bedeutet hier, dass im Gegensatz zu den Proofs of Knowledge aus Definition \ref{definition:proofsystem}  die Korrektheit nur gegegenüber polynomiellen unehrlichen Beweisstrategien gewährleistet sein muss.\footnote{siehe \cite[Seite 5]{20yearszeroknowledge}} Mit non-interactive wird gemeint, dass ein Verifizierer nur den Beweis \( \pi \) benötigt, um überzeugt zu werden - eine Interaktion ist nicht nötig. Ein Beweis ist succint, wenn er immer eine konstante Größe besitzt und die Dauer der Überprüfung von der Länge des Eingabewortes abhängt, nicht von der Größe des Schaltkreises. Bei der konkreten Implementierung Zcash ist dabei von wenigen Millisekunden Verifizierungsdauer und einer Größe von einem Bruchteil eines Kilobytes die Rede \footnote{siehe \cite[Seite 5 + 29]{zerocash}} Zero Knowledge sagt in diesem Kontext aus, dass ehrliche Beweise in einem korrekt initialisierten Zerocash-System ununterscheidbar sind von simulierten Beweisen, die von einem mit einem Hintertürchen initialisierten Zerocash-System in polynomieller Laufzeit generiert werden konnten.\footnote{siehe \cite[Seite 11]{zerocash}}
+
+\subsection{POUR-Operation}
+Die \( \textsf{POUR} \)-Operation wird verwendet, um Coins in andere Coins umzugießen, und damit Beträge auszuzahlen oder Coins aufzuteilen oder zusammenzuführen.
+
+Die konkrete NP-Aussage ist dabei, dass der Beweiser im öffentlichen Merkle-Baum aufgeführte valide Coins besitzt, die er in andere valide Coins desselben Wertes umgießt.
+
+Zusammen mit unter anderem der Seriennummer des verbrauchten Coins (die dazu dient um Doppelausgaben zu vermeiden) und den Coin-Commitments der entstandenen Coins wird dann der \( \textsf{POUR} \)-Zero-Knowledge-Beweis von den Teilnehmern der öffentlichen Bestandshaltung überprüft und anschließend an diese angehängt.
+
+\subsection{Bewertung}
+Innerhalb von wenigen Monaten nach dem Start von Zcash am 28. Oktober 2016 hat es Zcash auf Platz 12 der Kryptowährungen im Bezug auf Marktkapitalisierung geschafft.\footnote{siehe \cite{cryptocurrencymarketcapitalizations}} Auch Edward Snowden soll bei einer Konferenz in Berlin im Videochat Zerocash als verschlüsselte Alternative zu Bitcoin erwähnt haben.\footnote{siehe \cite{snowdenzcash}}
+
+Problematisch bei dem Teil dieser Arbeit war, dass die einzige seriöse Quelle, die ich zu diesem Thema entdecken konnte, die Arbeit zur Entwicklung des Zerocash-Protokolls war, die im Rahmen einer Konferenz veröffentlicht wurden. Dies ist vor allem deshalb kritisch, da die Wissenschaftler, die den Artikel geschrieben haben, an der Zcash Electric Coin Company beteiligt sind, die von jedem erstellten Zcash-Coin \( 10 \% \) \glqq{}Founders Reward\grqq{} bekommen, was bei einem Gesamtwert der im System vorhandenen Coins von 600 Millionen US-Dollar ein beträchtlicher Betrag ist.\footnote{wie im Blogeintrag \cite{zcashfunding} beschrieben.}
+
+\pagebreak

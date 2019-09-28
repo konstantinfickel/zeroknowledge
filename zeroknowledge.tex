@@ -1,0 +1,197 @@
+\documentclass[12pt,a4paper,bibliography=totocnumbered,listof=totocnumbered]{scrartcl}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{tabularx}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage[right]{eurosym}
+\usepackage{subfig}
+\usepackage{floatflt}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{colortbl}
+\usepackage{paralist}
+\usepackage{array}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage[right]{eurosym}
+\usepackage[subfigure,titles]{tocloft}
+\usepackage[pdfpagelabels=true]{hyperref}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{mdframed}
+\usepackage{pdfpages}
+\usepackage{breqn}
+
+\usepackage{url}
+\def\UrlBreaks{\do\/\do-}
+
+\newtheorem{definition}{Definition}
+\newtheorem{claim}{Behauptung}
+\newtheorem{theorem}{Satz}
+\newtheorem{protocol}{Protokoll}
+\newtheorem{algorithm}{Algorithmus}
+
+\lstset{basicstyle=\footnotesize, captionpos=b, breaklines=true, showstringspaces=false, tabsize=2, frame=lines, numbers=left, numberstyle=\tiny, xleftmargin=2em, framexleftmargin=2em}
+\makeatletter
+\def\l@lstlisting#1#2{\@dottedtocline{1}{0em}{1em}{\hspace{1,5em} Lst. #1}{#2}}
+\makeatother
+
+\geometry{a4paper, top=27mm, left=30mm, right=20mm, bottom=35mm, headsep=10mm, footskip=12mm}
+
+\hypersetup{
+  unicode=false,
+  pdftoolbar=true,
+  pdfmenubar=true,
+  pdffitwindow=false,
+  pdfstartview={FitH},
+  pdftitle={Zero Knowledge Proofs},
+  pdfauthor={Konstantin Fickel},
+  pdfsubject={Seminararbeit Zero Knowledge},
+  pdfcreator={\LaTeX},
+  pdfproducer={pdfTeX \the\pdftexversion.\pdftexrevision},
+  pdfkeywords={Seminararbeit},
+  pdfnewwindow=true,
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  filecolor=magenta,
+  urlcolor=black
+}
+\pdfinfo{/CreationDate (D:20170705000000)}
+
+\begin{document}
+
+\includepdf[pages={1}]{img/cover.pdf}
+
+\titlespacing{\section}{0pt}{12pt plus 4pt minus 2pt}{-6pt plus 2pt minus 2pt}
+
+% Kopf- und Fusszeile
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\renewcommand{\leftmark}{\rightmark}
+\pagestyle{fancy}
+\lhead{}
+\chead{}
+\rhead{\thesection\space\contentsname}
+\lfoot{Zero Knowledge}
+\cfoot{}
+\rfoot{\ \linebreak Seite \thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Vorspann
+\renewcommand{\thesection}{\Roman{section}}
+\renewcommand{\theHsection}{\Roman{section}}
+\pagenumbering{Roman}
+
+% ----------------------------------------------------------------------------------------------------------
+% Titelseite
+% ----------------------------------------------------------------------------------------------------------
+\thispagestyle{empty}
+\begin{center}
+	\includegraphics[scale=0.22]{img/00_logo_unia.pdf}\\
+	\vspace*{2cm}
+	\Large
+	\textbf{Fakultät}\\
+	\textbf{Angewandte Informatik}\\
+	\vspace*{2cm}
+	\Huge
+	\textbf{Seminararbeit}\\
+	\vspace*{0.5cm}
+	\large
+	über das Thema\\
+	\vspace*{1cm}
+	\textbf{Zero Knowledge}\\
+	\vspace*{2cm}
+      
+	\vfill
+	\normalsize
+	\newcolumntype{x}[1]{>{\raggedleft\arraybackslash\hspace{0pt}}p{#1}}
+	\begin{tabular}{x{3.5cm}p{10cm}}
+		\rule{0mm}{5ex}\textbf{Autor:} & Konstantin Fickel\newline konstantin.fickel@student.uni-augsburg.de \\ 
+		\rule{0mm}{5ex}\textbf{Betreuer:} & Kuzman Katkalov \\ 
+		\rule{0mm}{5ex}\textbf{Abgabedatum:} & 05. 07. 2017 \\ 
+	\end{tabular} 
+\end{center}
+\pagebreak
+
+% ----------------------------------------------------------------------------------------------------------
+% Abstract
+% ----------------------------------------------------------------------------------------------------------
+\setcounter{page}{1}
+\onehalfspacing
+\titlespacing{\section}{0pt}{12pt plus 4pt minus 2pt}{2pt plus 2pt minus 2pt}
+
+\pagebreak
+
+% ----------------------------------------------------------------------------------------------------------
+% Verzeichnisse
+% % ----------------------------------------------------------------------------------------------------------
+% TODO Typ vor Nummer
+\renewcommand{\cfttabpresnum}{Tab. }
+\renewcommand{\cftfigpresnum}{Abb. }
+\settowidth{\cfttabnumwidth}{Abb. 10\quad}
+\settowidth{\cftfignumwidth}{Abb. 10\quad}
+
+\titlespacing{\section}{0pt}{12pt plus 4pt minus 2pt}{2pt plus 2pt minus 2pt}
+\singlespacing
+\rhead{INHALTSVERZEICHNIS}
+\renewcommand{\contentsname}{Inhaltsverzeichnis}
+\phantomsection
+\addtocounter{section}{1}
+\tableofcontents
+
+\pagebreak
+
+% ----------------------------------------------------------------------------------------------------------
+% Inhalt
+% ----------------------------------------------------------------------------------------------------------
+% Abstände Überschrift
+% \titlespacing{\section}{0pt}{12pt plus 4pt minus 2pt}{-6pt plus 2pt minus 2pt}
+% \titlespacing{\subsection}{0pt}{12pt plus 4pt minus 2pt}{-6pt plus 2pt minus 2pt}
+% \titlespacing{\subsubsection}{0pt}{12pt plus 4pt minus 2pt}{-6pt plus 2pt minus 2pt}
+
+% % Kopfzeile
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\renewcommand{\subsectionmark}[1]{}
+\renewcommand{\subsubsectionmark}[1]{}
+\lhead{Kapitel \thesection}
+\rhead{\rightmark}
+
+\onehalfspacing
+\renewcommand{\thesection}{\arabic{section}}
+\renewcommand{\theHsection}{\arabic{section}}
+\setcounter{section}{0}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+% ----------------------------------------------------------------------------------------------------------
+% Einleitung
+% ----------------------------------------------------------------------------------------------------------
+\input{tex/01_introduction.tex}
+
+\input{tex/02_definition.tex}
+
+\input{tex/03_example.tex}
+
+\input{tex/04_fiatshamir.tex}
+
+\input{tex/05_zerocash.tex}
+
+\input{tex/06_end.tex}
+
+% ----------------------------------------------------------------------------------------------------------
+% Literatur
+% ----------------------------------------------------------------------------------------------------------
+\renewcommand\refname{Quellenverzeichnis}
+
+\bibliographystyle{zeroknowledge_bibliographystyle}
+\bibliography{zeroknowledge_bibliography}
+\pagebreak
+
+\end{document}
+
