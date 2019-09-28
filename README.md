@@ -1,6 +1,6 @@
 # Zero-Knowledge Seminararbeit
 
-[Zero Knowledge-Kommunikation anhand von Fröschen](img/github-image.png)
+![Zero Knowledge-Kommunikation anhand von Fröschen](img/github-image.png)
 
 Einführung in Zero-Knowledge-Beweise und deren Anwendungen.
 
